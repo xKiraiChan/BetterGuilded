@@ -10,7 +10,7 @@ if %ERRORLEVEL% EQU 9009 (
 )
 
 :: Check that npm is installed
-node -v >nul
+npm -v >nul
 if %ERRORLEVEL% EQU 9009 (
 	echo NPM is not installed.
 	pause > nul
