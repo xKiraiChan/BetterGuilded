@@ -1,5 +1,14 @@
 @echo off
 
+:: Check that guilded isnt running
+tasklist /FI "IMAGENAME eq Guilded.exe" 2>NUL | find /I /N "Guilded.exe">NUL
+if "%ERRORLEVEL%"=="0" (
+	echo Guilded is running.
+	echo Please close it and run the installer again.
+	pause > nul
+	exit
+)
+
 :: Check that node is installed
 node -v >nul
 if %ERRORLEVEL% EQU 9009 (
