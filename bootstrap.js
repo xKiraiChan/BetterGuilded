@@ -1,41 +1,86 @@
-// todo: add more after basic POC
-window.BetterGuildedBootstrapped = true;
+  // todo: add more after basic POC
+  window.UsingBetterGuilded = true;
 
-let textboxCheckInterval = setInterval(() => {
-  let _res = document.getElementsByClassName("Editor-container Editor-container-type-simple ChatChannelInput-editor");
-  if (_res.length == 0) return;
- 
-  let ta = document.evaluate("div/div[2]/div/span/span/span", _res[0], null, 9, null).singleNodeValue;
-  if (!ta) return;
-  
-  clearInterval(textboxCheckInterval);
- 
-  _res[0].addEventListener("keydown", (e) => {
-    if (e.key == "Enter" && !e.shiftKey) {
-      if (ta.textContent.length >= 1 && ta.textContent[0] == ".") {
-        e.stopPropagation();
-        e.preventDefault();
-        
-        let value = ta.textContent;
-        
-        CommandHelper(value, ta);
-      }
+  const Module = GuildedNative.require("module");
+
+  window.BG = {};
+  BG.API = {};
+  BG.Memory = {};
+  BG.Memory.Internal = {};
+
+  BG.API.FetchURL = (url) => {
+    return new Promise((res, rej) => {
+      let xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+          if (xhr.status != 200) rej(xhr.status);
+          else res(xhr.responseText);
+        }
+      };
+
+      xhr.open("GET", url, true);
+      xhr.send();
+    });
+  }
+
+  BG.API.LoadCSS = (css) => {
+    var style = document.createElement("style");
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  BG.API.LoadScript = (src) => {
+    var script = document.createElement("script");
+    script.src = src;
+    document.head.appendChild(script);
+  }
+
+  BG.API.LoadScript("https://cdn.jsdelivr.net/npm/vex-js@4.1.0/dist/js/vex.combined.min.js");
+  (async () => {
+    BG.API.LoadCSS(await BG.API.FetchURL("https://cdn.jsdelivr.net/npm/vex-js@4.1.0/dist/css/vex.min.css"));
+    BG.API.LoadCSS(await BG.API.FetchURL("https://cdn.jsdelivr.net/npm/vex-js@4.1.0/dist/css/vex-theme-wireframe.min.css"));
+  })();
+
+  let vexAwaiter = setInterval(() => {
+    if (!window.vex) return;
+
+    clearInterval(vexAwaiter);
+
+    vex.defaultOptions.className = "vex-theme-wireframe";
+  }, 250)
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key == "Insert") {
+      vex.dialog.prompt({
+        message: 'Enter a command',
+        placeholder: 'help',
+        callback: function (value) {
+          if (value) 
+            CommandHelper(value);
+        }
+      });
     }
   });
-}, 100);
 
-function CommandHelper(command, elem) {
-  let args = command.substr(1).split(" ");
+  function CommandHelper(raw) {    
+    let args = raw.trim().split(" ").filter(token => token.length > 0);
+    if (args.length == 0) {
+      vex.dialog.alert("Empty command");
+      return; 
+    }
 
-  switch (args[0]) {
-    case "help":
-      elem.textContent = "BetterGuilded @ github.com/xKiraiChan/BetterGuilded";
-      break;
-    case "load":
-    case "unload":
-      elem.textContent = "Not Implemented";
-      break;
-    default:
-      elem.textContent = "Unknown command"
+    let command = args.splice(0, 1)[0];
+
+    switch (command) {
+      case "help":
+        vex.dialog.alert("BetterGuilded @ github.com/xKiraiChan/BetterGuilded");
+        break;
+      case "load":
+      case "unload":
+        vex.dialog.alert("Not Implemented");
+        break;
+      default:
+        vex.dialog.alert("Unknown command");
+    }
   }
-}
