@@ -18,15 +18,6 @@ if %ERRORLEVEL% EQU 9009 (
 	exit
 )
 
-:: Check that npm is installed
-npm -v >nul
-if %ERRORLEVEL% EQU 9009 (
-	echo NPM is not installed.
-	pause > nul
-	start https://nodejs.org
-	exit
-)
-
 :: Check that we are running as admin
 net session >nul 2>&1
 if %errorLevel% NEQ 0 (
