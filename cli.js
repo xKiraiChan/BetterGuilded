@@ -1,3 +1,1 @@
-export function MakeCLI() {
-    return React.createElement("div");
-}
+return React.createElement("div");

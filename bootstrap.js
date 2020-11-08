@@ -48,13 +48,10 @@ BG.API.LoadStyle = (url) => {
   BG.Styles.Root.appendChild(link);
 }
 
-BG.API.LoadScript = (url, defered = false, _module = false) => {
+BG.API.LoadScript = (url) => {
   var script = document.createElement("script");
   script.src = url;
-  script.defer = defered;
-  if (_module) 
-    script.type = "module";
-  BG.Scripts.Root.appendChild(script);
+  BG.Elements.Root.appendChild(script);
   return script;
 }
 
@@ -62,21 +59,20 @@ new Promise((res) => {
   (document.onreadystatechange = () => {
       if (document.readyState == "complete") res();
   })();
-}).then(() => {
+}).then(async () => {
   (BG.Elements.Root = document.createElement("div")).id = "BetterGuildedRoot";
   (BG.Elements.React = document.createElement("div")).id = "BetterGuildedReact";
-  (BG.Elements.Styles = document.createElement("div")).id = "BetterGuildedStyles";
   (BG.Elements.Scripts = document.createElement("div")).id = "BetterGuildedScripts";
 
   BG.Elements.Root.appendChild(BG.Elements.React);
-  BG.Elements.Root.appendChild(BG.Elements.Styles);
   BG.Elements.Root.appendChild(BG.Elements.Scripts);
   document.body.appendChild(BG.Elements.Root);
 
-  BG.API.LoadScript("https://raw.githubusercontent.com/xKiraiChan/BetterGuilded/main/defered.js", true, true);
   BG.API.LoadScript("https://unpkg.com/react@17/umd/react.production.min.js");
   BG.API.LoadScript("https://unpkg.com/react-dom@17/umd/react-dom.production.min.js");
   BG.API.LoadStyle("https://raw.githubusercontent.com/xKiraiChan/BetterGuilded/main/BGDefaultStyle.css");
+
+  ReactDom.render(eval(await BG.API.FetchURL("https://cdn.jsdelivr.net/gh/xKiraiChan/BetterGuilded@main/cli.min.js")), BG.Elements.React);
 });
 
 // document.addEventListener("keydown", (e) => {
