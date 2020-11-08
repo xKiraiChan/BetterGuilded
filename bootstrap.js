@@ -10,7 +10,12 @@ window.BG = {
   Memory: { 
     Internal: {} 
   },
-  Elements: {}
+  Elements: {
+    Scripts: undefined,
+    Styles: undefined,
+    React: undefined,
+    Root: undefined,
+  }
 };
 
 
@@ -33,14 +38,14 @@ BG.API.FetchURL = (url) => {
 BG.API.LoadCSS = (raw) => {
   var style = document.createElement("style");
   style.textContent = raw;
-  BG.Elements.Root.appendChild(style);
+  BG.Styles.Root.appendChild(style);
 }
 
 BG.API.LoadStyle = (url) => {
   let link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = url;
-  BG.Elements.Root.appendChild(link);
+  BG.Styles.Root.appendChild(link);
 }
 
 BG.API.LoadScript = (url, defered = false, _module = false) => {
@@ -49,7 +54,7 @@ BG.API.LoadScript = (url, defered = false, _module = false) => {
   script.defer = defered;
   if (_module) 
     script.type = "module";
-  BG.Elements.Root.appendChild(script);
+  BG.Scripts.Root.appendChild(script);
   return script;
 }
 
@@ -60,9 +65,11 @@ new Promise((res) => {
 }).then(() => {
   (BG.Elements.Root = document.createElement("div")).id = "BetterGuildedRoot";
   (BG.Elements.React = document.createElement("div")).id = "BetterGuildedReact";
+  (BG.Elements.Styles = document.createElement("div")).id = "BetterGuildedStyles";
   (BG.Elements.Scripts = document.createElement("div")).id = "BetterGuildedScripts";
 
   BG.Elements.Root.appendChild(BG.Elements.React);
+  BG.Elements.Root.appendChild(BG.Elements.Styles);
   BG.Elements.Root.appendChild(BG.Elements.Scripts);
   document.body.appendChild(BG.Elements.Root);
 
