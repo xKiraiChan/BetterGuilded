@@ -1,6 +1,7 @@
 if (window.UsingBetterGuilded) { 
-  
-} 
+  let root = document.getElementById("BetterGuildedRoot");
+  if (root) root.parentElement.removeChild(root);
+}
 
 window.UsingBetterGuilded = true;
 
@@ -8,8 +9,10 @@ window.BG = {
   API: {}, 
   Memory: { 
     Internal: {} 
-  }
+  },
+  Elements: {}
 };
+
 
 BG.API.FetchURL = (url) => {
   return new Promise((res, rej) => {
@@ -30,66 +33,81 @@ BG.API.FetchURL = (url) => {
 BG.API.LoadCSS = (raw) => {
   var style = document.createElement("style");
   style.textContent = raw;
-  document.head.appendChild(style);
+  BG.Elements.Root.appendChild(style);
 }
 
 BG.API.LoadStyle = (url) => {
   let link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = url;
-  document.head.appendChild(link);
+  BG.Elements.Root.appendChild(link);
 }
 
-BG.API.LoadScript = (url) => {
+BG.API.LoadScript = (url, defered = false, _module = false) => {
   var script = document.createElement("script");
   script.src = url;
-  document.head.appendChild(script);
+  script.defer = defered;
+  if (_module) 
+    script.type = "module";
+  BG.Elements.Root.appendChild(script);
   return script;
 }
 
-let vexDialogOpen = false;
-BG.API.LoadStyle("https://cdn.jsdelivr.net/npm/vex-js@4.1.0/dist/css/vex.min.css");
-BG.API.LoadStyle("https://cdn.jsdelivr.net/npm/vex-js@4.1.0/dist/css/vex-theme-wireframe.min.css");
-BG.API.LoadScript("https://cdn.jsdelivr.net/npm/vex-js@4.1.0/dist/js/vex.combined.min.js").addEventListener("load", _ => {
-  vex.defaultOptions.className = "vex-theme-wireframe";
+new Promise((res) => {
+  (document.onreadystatechange = () => {
+      if (document.readyState == "complete") res();
+  })();
+}).then(() => {
+  (BG.Elements.Root = document.createElement("div")).id = "BetterGuildedRoot";
+  (BG.Elements.React = document.createElement("div")).id = "BetterGuildedReact";
+  (BG.Elements.Scripts = document.createElement("div")).id = "BetterGuildedScripts";
+
+  BG.Elements.Root.appendChild(BG.Elements.React);
+  BG.Elements.Root.appendChild(BG.Elements.Scripts);
+  document.body.appendChild(BG.Elements.Root);
+
+  BG.API.LoadScript("https://raw.githubusercontent.com/xKiraiChan/BetterGuilded/main/defered.js", true, true);
+  BG.API.LoadScript("https://unpkg.com/react@17/umd/react.production.min.js");
+  BG.API.LoadScript("https://unpkg.com/react-dom@17/umd/react-dom.production.min.js");
+  BG.API.LoadStyle("https://raw.githubusercontent.com/xKiraiChan/BetterGuilded/main/BGDefaultStyle.css");
 });
 
-document.addEventListener("keydown", (e) => {
-  if (!vexDialogOpen) {
-    if (e.key == "Insert") {
-      vexDialogOpen = true;
-      vex.dialog.prompt({
-        message: 'Enter a command',
-        placeholder: 'help',
-        callback: function (value) {
-          if (value)
-            CommandHelper(value);
-          else
-            vexDialogOpen = false;
-        }
-      });
-    }
-  }
-});
+// document.addEventListener("keydown", (e) => {
+//   if (!vexDialogOpen) {
+//     if (e.key == "Insert") {
+//       vexDialogOpen = true;
+//       vex.dialog.prompt({
+//         message: 'Enter a command',
+//         placeholder: 'help',
+//         callback: function (value) {
+//           if (value)
+//             CommandHelper(value);
+//           else
+//             vexDialogOpen = false;
+//         }
+//       });
+//     }
+//   }
+// });
 
-function CommandHelper(raw) {
-  let args = raw.trim().split(" ").filter(token => token.length > 0);
-  if (args.length == 0) {
-    vex.dialog.alert("Empty command");
-    return;
-  }
+// function CommandHelper(raw) {
+//   let args = raw.trim().split(" ").filter(token => token.length > 0);
+//   if (args.length == 0) {
+//     vex.dialog.alert("Empty command");
+//     return;
+//   }
 
-  let command = args.splice(0, 1)[0];
+//   let command = args.splice(0, 1)[0];
 
-  switch (command) {
-    case "help":
-      vex.dialog.alert("BetterGuilded @ github.com/xKiraiChan/BetterGuilded");
-      break;
-    case "load":
-    case "unload":
-      vex.dialog.alert("Not Implemented");
-      break;
-    default:
-      vex.dialog.alert("Unknown command");
-  }
-}
+//   switch (command) {
+//     case "help":
+//       vex.dialog.alert("BetterGuilded @ github.com/xKiraiChan/BetterGuilded");
+//       break;
+//     case "load":
+//     case "unload":
+//       vex.dialog.alert("Not Implemented");
+//       break;
+//     default:
+//       vex.dialog.alert("Unknown command");
+//   }
+// }
