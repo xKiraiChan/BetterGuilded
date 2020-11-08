@@ -72,7 +72,7 @@ new Promise((res) => {
   BG.API.LoadScript("https://unpkg.com/react-dom@17/umd/react-dom.production.min.js");
   BG.API.LoadStyle("https://raw.githubusercontent.com/xKiraiChan/BetterGuilded/main/BGDefaultStyle.css");
 
-  ReactDom.render(eval(await BG.API.FetchURL("https://cdn.jsdelivr.net/gh/xKiraiChan/BetterGuilded@main/cli.min.js")), BG.Elements.React);
+  ReactDOM.render(eval(await BG.API.FetchURL("https://raw.githubusercontent.com/xKiraiChan/BetterGuilded/main/cli.js")), BG.Elements.React);
 });
 
 // document.addEventListener("keydown", (e) => {
